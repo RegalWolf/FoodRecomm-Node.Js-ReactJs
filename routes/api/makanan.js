@@ -33,7 +33,7 @@ router.get('/search/',
     }
 
     if (req.query.kalori_max) {
-      db.execute('SELECT * FROM makanan WHERE kalori BETWEEN 0 AND ? ORDER BY kalori LIMIT ? OFFSET ?',
+      db.execute('SELECT * FROM makanan WHERE kalori BETWEEN 0 AND ? ORDER BY kalori DESC LIMIT ? OFFSET ?',
         [req.query.kalori_max, req.query.limit, offset])
         .then(makanan => {
           if (makanan[0].length < 1) {
