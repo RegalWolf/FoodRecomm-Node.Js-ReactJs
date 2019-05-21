@@ -38,7 +38,7 @@ const registerValidation = data => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: (isEmpty(errors.username) && isEmpty(errors.password) && isEmpty(errors.nama))
   };
 };
 

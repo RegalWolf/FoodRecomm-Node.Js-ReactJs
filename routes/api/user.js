@@ -34,6 +34,7 @@ router.post('/register', (req, res) => {
     .then(user => {
       if (user[0].length > 0) {
         errors.username = 'Username sudah digunakan';
+        console.log("hai");
         return res.status(404).json(errors);
       }
 
