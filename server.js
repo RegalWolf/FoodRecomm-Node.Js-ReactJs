@@ -24,9 +24,9 @@ require('./config/passport')(passport);
 
 // Use routes
 app.use('/api/users', users);
-// app.use('/api/profiles', profiles);
-// app.use('/api/kalori', kalori);
-// app.use('/api/history_makanan', history_makanan);
+app.use('/api/profiles', profiles);
+app.use('/api/kalori', kalori);
+app.use('/api/history_makanan', history_makanan);
 app.use('/api/makanan', makanan);
 
 // Port config

@@ -7,6 +7,9 @@ const loginValidation = data => {
   data.username = !isEmpty(data.username) ? data.username : '';
   data.password = !isEmpty(data.password) ? data.password : '';
 
+  errors.username = '';
+  errors.password = '';
+
   if (Validator.isEmpty(data.username)) {
     errors.username = 'Username tidak boleh kosong';
   }
