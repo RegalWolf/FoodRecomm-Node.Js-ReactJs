@@ -7,8 +7,8 @@ const loginValidation = data => {
   data.username = !isEmpty(data.username) ? data.username : '';
   data.password = !isEmpty(data.password) ? data.password : '';
 
-  errors.username = '';
-  errors.password = '';
+  errors.username = null;
+  errors.password = null;
 
   if (Validator.isEmpty(data.username)) {
     errors.username = 'Username tidak boleh kosong';
@@ -20,7 +20,7 @@ const loginValidation = data => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: (isEmpty(errors.username) && isEmpty(errors.password))
   };
 };
 
