@@ -31,7 +31,7 @@ router.get('/',
 					return res.status(404).json(errors);
 				}
 
-				res.json(makanan[0][0]);
+				res.json(makanan[0]);
 			})
 			.catch(err => {
 				res.status(404).json(err);
@@ -53,8 +53,8 @@ router.post('/',
     }
 
     // Save makanan to database
-    db.execute('INSERT INTO history_makanan (nama, kalori, gambar, user_id) VALUES (?, ?, ?, ?)',
-      [req.body.nama, req.body.kalori, req.body.gambar, req.user.id])
+    db.execute('INSERT INTO history_makanan (nama, kalori, user_id) VALUES (?, ?, ?)',
+      [req.body.nama, req.body.kalori, req.user.id])
       .then(result => {
         // Update data kalori dikonsumsi
         db.execute(
@@ -98,8 +98,6 @@ router.delete('/',
           'UPDATE kalori SET kalori_dikonsumsi = kalori_dikonsumsi - ? WHERE user_id = ? AND DATE_FORMAT(tanggal, "%d %m %Y") = (SELECT DATE_FORMAT(tanggal, "%d %m %Y") FROM history_makanan WHERE id = ?)',
           [result[0][0].kalori, req.user.id, req.body.id])
           .then(result2 => {
-            console.log(result2);
-            console.log(result[0][0].kalori);
             db.execute('DELETE FROM history_makanan WHERE id = ?', [req.body.id])
               .then(() => {
                 res.json({

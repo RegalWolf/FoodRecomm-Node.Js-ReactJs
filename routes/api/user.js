@@ -34,7 +34,6 @@ router.post('/register', (req, res) => {
     .then(user => {
       if (user[0].length > 0) {
         errors.username = 'Username sudah digunakan';
-        console.log("hai");
         return res.status(404).json(errors);
       }
 
@@ -87,7 +86,6 @@ router.post('/login', (req, res) => {
 
       bcrypt.compare(password, password2)
         .then(isMatch => {
-          console.log(isMatch);
           if (!isMatch) {
             errors.password = 'Password salah';
             return res.status(400).json(errors);
@@ -97,8 +95,6 @@ router.post('/login', (req, res) => {
             id: user[0][0].id,
             nama: user[0][0].nama
           };
-
-          console.log(payload);
 
           jwt.sign(payload, secretOrKey, { expiresIn: 2628002 }, (err, token) => {
             res.json({

@@ -2,7 +2,13 @@ const Validator = require('validator');
 const isEmpty = require('./isEmpty');
 
 const registerValidation = data => {
-  let errors = {};
+  let errors = {
+    jenis_kelamin: null,
+    usia: null,
+    berat_badan: null,
+    tinggi_badan: null,
+    tingkat_aktivitas: null
+  };
 
   data.jenis_kelamin = !isEmpty(data.jenis_kelamin) ? data.jenis_kelamin : '';
   data.usia = !isEmpty(data.usia) ? data.usia : '';
@@ -32,7 +38,8 @@ const registerValidation = data => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: (isEmpty(errors.jenis_kelamin) && isEmpty(errors.usia) && isEmpty(errors.berat_badan)
+      && isEmpty(errors.tinggi_badan) && isEmpty(errors.tingkat_aktivitas))
   };
 };
 
