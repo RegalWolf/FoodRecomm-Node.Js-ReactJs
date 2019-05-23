@@ -29,7 +29,7 @@ router.get('/',
 					return res.status(404).json(errors);
 				}
 
-				res.json(kalori[0]);
+				res.json(kalori[0][0]);
 			})
 			.catch(err => {
 				res.status(404).json(err);
