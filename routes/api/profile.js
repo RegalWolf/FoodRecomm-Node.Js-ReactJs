@@ -151,7 +151,7 @@ router.post('/',
 							}
 
 							// Save to database
-							db.execute('SELECT * FROM kalori where user_id = ?', [req.user.id])
+							db.execute('SELECT * FROM kalori where user_id = ? && DATE(tanggal) = CURDATE()', [req.user.id])
 								.then(kalori => {
 									if (kalori[0].length > 0) { // Jika data kalori sudah ada
 										// Update kalori
@@ -229,8 +229,6 @@ router.post('/',
 								}
 							})
 							.catch(err => res.status(404).json(err));
-
-							res.json({ success: 'Success menyimpan profile' })
 						})
 						.catch(err => res.status(404).json(err));
 				}
