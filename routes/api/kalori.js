@@ -18,14 +18,16 @@ router.get('/test', (req, res) => res.json(
 router.get('/', 
   passport.authenticate('jwt', { session: false }), 
   (req, res) => {
-		const errors = {};
+		const errors = {
+			noKalori = null
+		};
 
 		db.execute(
 			'SELECT * FROM kalori WHERE user_id = ? && DATE(tanggal) = CURDATE()', 
 			[req.user.id])
 			.then(kalori => {
 				if (kalori[0].length < 1) {
-					errors.nokalori = 'Tidak ada data kalori untuk pengguna ini';
+					errors.noKalori = 'Tidak ada data kalori untuk pengguna ini';
 					return res.status(404).json(errors);
 				}
 
