@@ -19,7 +19,7 @@ router.get('/',
   passport.authenticate('jwt', { session: false }), 
   (req, res) => {
 		const errors = {
-			noKalori = null
+			noKalori: null
 		};
 
 		db.execute(
