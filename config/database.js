@@ -7,8 +7,6 @@ const pool = mysql.createPool({
     password: ''
 });
 
-mysql://b8517e415ed344:d1381104@us-cdbr-iron-east-02.cleardb.net/heroku_98d1a407185b11a?reconnect=true
-
 if (process.env.NODE_ENV === 'production') {
     pool = mysql.createPool({
         // host: '103.129.220.6',
