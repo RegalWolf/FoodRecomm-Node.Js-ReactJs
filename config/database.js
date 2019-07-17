@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-const pool = mysql.createPool({
+let pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     database: 'reactiv2_healthy_food',
