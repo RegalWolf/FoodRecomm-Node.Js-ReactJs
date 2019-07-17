@@ -30,27 +30,32 @@ router.post('/register', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  db.execute('SELECT * FROM pengguna WHERE username = ?', [req.body.username])
+  const newUser = {
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword
+  };
+
+  if (newUser.password !== newUser.confirmPassword) {
+    errors.confirmPassword = 'Password tidak sama';
+    return res.status(400).json(errors);
+  }
+
+  db.execute('SELECT * FROM pengguna WHERE email = ?', [req.body.email])
     .then(user => {
       if (user[0].length > 0) {
-        errors.username = 'Username sudah digunakan';
+        errors.email = 'Email sudah digunakan';
         return res.status(404).json(errors);
       }
-
-      const newUser = {
-        nama: req.body.nama,
-        username: req.body.username,
-        password: req.body.password
-      };
 
       bcrypt.hash(newUser.password, 10, (err, hash) => {
         if (err) throw err;
 
         newUser.password = hash;
-      
+
         db.execute(
-          'INSERT INTO pengguna (nama, username, password) VALUES (?, ?, ?)',
-          [newUser.nama, newUser.username, newUser.password])
+          'INSERT INTO pengguna (email, password) VALUES (?, ?)',
+          [newUser.email, newUser.password])
           .then(() => res.json(
             { register: 'Register sukses' }
           ))
@@ -72,13 +77,13 @@ router.post('/login', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  const username = req.body.username;
+  const email = req.body.email;
   const password = req.body.password;
 
-  db.execute('SELECT * FROM pengguna WHERE username = ?', [username])
+  db.execute('SELECT * FROM pengguna WHERE email = ?', [email])
     .then(user => {
       if (user[0].length < 1) {
-        errors.username = 'Username tidak terdaftar';
+        errors.email = 'Email tidak terdaftar';
         return res.status(404).json(errors);
       }
 
@@ -92,11 +97,11 @@ router.post('/login', (req, res) => {
           }
 
           const payload = {
-            id: user[0][0].id,
+            id: user[0][0].pengguna_id,
             nama: user[0][0].nama
           };
 
-          jwt.sign(payload, secretOrKey, { expiresIn: 2628002 }, (err, token) => {
+          jwt.sign(payload, secretOrKey, {}, (err, token) => {
             res.json({
               success: 'Login success',
               token: `Bearer ${token}`

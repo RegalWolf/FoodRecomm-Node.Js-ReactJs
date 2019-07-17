@@ -4,41 +4,37 @@ const isEmpty = require('./isEmpty');
 const registerValidation = data => {
   let errors = {};
 
-  errors.nama = null;
-  errors.username = null;
+  errors.email = null;
   errors.password = null;
+  errors.confirmPassword = null;
 
-  data.nama = !isEmpty(data.nama) ? data.nama : '';
-  data.username = !isEmpty(data.username) ? data.username : '';
+  data.email = !isEmpty(data.email) ? data.email : '';
   data.password = !isEmpty(data.password) ? data.password : '';
+  data.confirmPassword = !isEmpty(data.confirmPassword) ? data.confirmPassword : '';
 
-  if (!Validator.isLength(data.nama, { min: 2, max: 50 })) {
-    errors.nama = 'Nama harus 2 sampai 50 karakter';
+  if (!Validator.isEmail(data.email)) {
+    errors.email = 'Email tidak valid';
   }
 
-  if (Validator.isEmpty(data.nama)) {
-    errors.nama = 'Nama tidak boleh kosong';
+  if (!Validator.isLength(data.email, { min: 1, max: 60 })) {
+    errors.email = 'Email maksimal 60 karakter';
   }
 
-  if (!Validator.isLength(data.username, { min: 6, max: 30 })) {
-    errors.username = 'Username harus 6 sampai 30 karakter';
-  }
-
-  if (Validator.isEmpty(data.username)) {
-    errors.username = 'Username tidak boleh kosong';
-  }
-
-  if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
-    errors.password = 'Password harus 6 sampai 30 karakter';
+  if (Validator.isEmpty(data.email)) {
+    errors.email = 'Email tidak boleh kosong';
   }
 
   if (Validator.isEmpty(data.password)) {
     errors.password = 'Password tidak boleh kosong';
   }
 
+  if (Validator.isEmpty(data.confirmPassword)) {
+    errors.confirmPassword = 'Confirm password tidak boleh kosong';
+  }
+
   return {
     errors,
-    isValid: (isEmpty(errors.username) && isEmpty(errors.password) && isEmpty(errors.nama))
+    isValid: (isEmpty(errors.email) && isEmpty(errors.password) && isEmpty(errors.confirmPassword))
   };
 };
 

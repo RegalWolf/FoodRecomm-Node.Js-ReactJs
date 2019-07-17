@@ -5,8 +5,6 @@ const router = express.Router();
 
 // Load database config
 const db = require('../../config/database');
-// Load input validation
-const validateGetMakanan = require('../../validation/getMakanan');
 
 // @routes GET api/makanan/test
 // @Access public
@@ -20,21 +18,16 @@ router.get('/test', (req, res) => res.json(
 router.get('/search/', 
   passport.authenticate('jwt', { session: false }), 
   (req, res) => {
-    const { errors, isValid } = validateGetMakanan(req.query);
-    
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
-
-    let offset = 0;
-
-    if (req.query.page > 1) {
-      offset = (req.query.page - 1) * 10
-    }
+    const errors = {};
 
     if (req.query.kalori_max) {
-      db.execute('SELECT * FROM makanan WHERE kalori BETWEEN 0 AND ? ORDER BY kalori DESC LIMIT ? OFFSET ?',
-        [req.query.kalori_max, req.query.limit, offset])
+      if (req.query.limit == null) {
+        errors.limit = 'Limit tidak boleh kosong';
+        return res.status(400).json(errors);
+      }
+
+      db.execute('SELECT * FROM makanan WHERE kategori = "PF" AND kalori BETWEEN 0 AND ? ORDER BY RAND() LIMIT ?;',
+        [req.query.kalori_max, req.query.limit])
         .then(makanan => {
           if (makanan[0].length < 1) {
             errors.noMakanan = 'Makanan tidak tersedia';
@@ -59,6 +52,11 @@ router.get('/search/',
         .catch(err => {
           res.status(404).json(err);
         })
+    } else {
+      errors.pencarian = 'kalori_max atau nama harus diisi';
+      errors.kalori_max = 'kalori_max harus di isi';
+      errors.nama = 'nama harus di isi';
+      return res.status(404).json(errors);
     }
   }
 );

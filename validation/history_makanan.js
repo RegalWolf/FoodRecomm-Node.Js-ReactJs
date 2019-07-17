@@ -3,24 +3,18 @@ const isEmpty = require('./isEmpty');
 
 const makananValildation = data => {
   let errors = {
-    nama: null,
-    kalori: null
+    makanan_id: null
   };
 
-  data.nama = !isEmpty(data.nama) ? data.nama : '';
-  data.kalori = !isEmpty(data.kalori) ? data.kalori : '';
+  data.makanan_id = !isEmpty(data.makanan_id) ? data.makanan_id : '';
 
-  if (Validator.isEmpty(data.nama)) {
-    errors.nama = 'Nama tidak boleh kosong';
-  }
-
-  if (Validator.isEmpty(data.kalori)) {
-    errors.kalori = 'Kalori tidak boleh kosong';
+  if (Validator.isEmpty(data.makanan_id)) {
+    errors.makanan_id = 'Makanan_id tidak boleh kosong';
   }
 
   return {
     errors,
-    isValid: (isEmpty(errors.nama) && isEmpty(errors.kalori))
+    isValid: (isEmpty(errors.makanan_id))
   };
 };
 

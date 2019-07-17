@@ -4,14 +4,18 @@ const isEmpty = require('./isEmpty');
 const loginValidation = data => {
   let errors = {};
 
-  data.username = !isEmpty(data.username) ? data.username : '';
+  data.email = !isEmpty(data.email) ? data.email : '';
   data.password = !isEmpty(data.password) ? data.password : '';
 
-  errors.username = null;
+  errors.email = null;
   errors.password = null;
 
-  if (Validator.isEmpty(data.username)) {
-    errors.username = 'Username tidak boleh kosong';
+  if (!Validator.isEmail(data.email)) {
+    errors.email = 'Email tidak valid';
+  }
+
+  if (Validator.isEmpty(data.email)) {
+    errors.email = 'Email tidak boleh kosong';
   }
 
   if (Validator.isEmpty(data.password)) {
@@ -20,7 +24,7 @@ const loginValidation = data => {
 
   return {
     errors,
-    isValid: (isEmpty(errors.username) && isEmpty(errors.password))
+    isValid: (isEmpty(errors.email) && isEmpty(errors.password))
   };
 };
 

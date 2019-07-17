@@ -11,7 +11,7 @@ opts.secretOrKey = secretOrKey;
 module.exports = passport => {
   passport.use(
     new JwtStrategy(opts, (jwt_payload, done) => {
-      db.execute('SELECT * FROM pengguna WHERE id = ?', [jwt_payload.id])
+      db.execute('SELECT * FROM pengguna WHERE pengguna_id = ?', [jwt_payload.id])
         .then(user => {
           if (user[0].length < 1) {
             return done(null, false);

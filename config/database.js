@@ -1,18 +1,25 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: 'sql12.freemysqlhosting.net',
-    user: 'sql12292381',
-    database: 'sql12292381',
-    password: 'rCT4v1mTmv'
-    // host: 'localhost',
-    // user: 'root',
-    // database: 'healthy_food',
-    // password: ''
-    // host: '103.129.220.6',
-    // user: 'reactiv2_username',
-    // database: 'reactiv2_healthy_food',
-    // password: 'username_47'
+    host: 'localhost',
+    user: 'root',
+    database: 'reactiv2_healthy_food',
+    password: ''
 });
+
+mysql://b8517e415ed344:d1381104@us-cdbr-iron-east-02.cleardb.net/heroku_98d1a407185b11a?reconnect=true
+
+if (process.env.NODE_ENV === 'production') {
+    pool = mysql.createPool({
+        // host: '103.129.220.6',
+        // user: 'reactiv2_username',
+        // database: 'reactiv2_healthy_food',
+        // password: 'username_47'
+        host: 'us-cdbr-iron-east-02.cleardb.net',
+        user: 'b8517e415ed344',
+        database: 'heroku_98d1a407185b11a',
+        password: 'd1381104'
+    });
+}
 
 module.exports = pool.promise();
