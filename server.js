@@ -23,6 +23,9 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 
 // Use routes
+app.get('/', (req, res) => {
+  res.send({ name: 'Nur Islamiyatus Sholeha' });
+});
 app.use('/api/users', users);
 app.use('/api/profiles', profiles);
 app.use('/api/kalori', kalori);
