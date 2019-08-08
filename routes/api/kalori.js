@@ -23,32 +23,36 @@ router.get('/',
 		};
 
 		db.execute(
-			'SELECT * FROM history_kalori WHERE pengguna_id = ? && DATE(tanggal) = CURDATE()', 
+			'SELECT * FROM history_kalori WHERE pengguna_id = ? && tanggal = CURDATE()', 
 			[req.user.pengguna_id])
 			.then(kalori => {
 				if (kalori[0].length < 1) {
-					db.execute('SELECT * FROM history_kalori WHERE DATE(tanggal) = CURDATE() - INTERVAL 1 DAY')
+					db.execute('SELECT * FROM history_kalori WHERE pengguna_id = ? ORDER BY tanggal DESC',
+						[req.user.pengguna_id])
 						.then(history_kalori => {
 							const d = new Date();
 							const now =
-									d.getFullYear() + "/" + 
-									("00" + (d.getMonth() + 1)).slice(-2) + "/" + 
-									("00" + d.getDate()).slice(-2) + " " + 
-									("00" + d.getHours()).slice(-2) + ":" + 
-									("00" + d.getMinutes()).slice(-2) + ":" + 
-									("00" + d.getSeconds()).slice(-2);
+									d.getFullYear() + "-" + 
+									("00" + (d.getMonth() + 1)).slice(-2) + "-" + 
+									("00" + d.getDate()).slice(-2);
 							db.execute(
 								'INSERT INTO history_kalori (kalori_dibutuhkan, kondisi_tubuh, pengguna_id, tanggal) VALUES (?, ?, ?, ?)',
 								[history_kalori[0][0].kalori_dibutuhkan, history_kalori[0][0].kondisi_tubuh, req.user.pengguna_id, now])
 								.then(() => {
 									db.execute(
-										'SELECT * FROM history_kalori WHERE pengguna_id = ? && DATE(tanggal) = CURDATE()', 
+										'SELECT * FROM history_kalori WHERE pengguna_id = ? && tanggal = CURDATE()', 
 										[req.user.pengguna_id])
 										.then(kalori2 => {
 											if (kalori2[0].length < 1) {
 												errors.noKalori = 'Tidak ada data kalori untuk pengguna ini';
 												return res.status(404).json(errors);
 											}
+
+											const tgl = new Date(kalori2[0][0].tanggal);
+											kalori2[0][0].tanggal = 
+													tgl.getFullYear() + "-" + 
+													("00" + (tgl.getMonth() + 1)).slice(-2) + "-" + 
+													("00" + tgl.getDate()).slice(-2);
 
 											res.json(kalori2[0][0]);
 										})
@@ -62,6 +66,12 @@ router.get('/',
 							res.status(404).json(err);
 						});
 				} else {
+					const tgl = new Date(kalori[0][0].tanggal);
+					kalori[0][0].tanggal = 
+							tgl.getFullYear() + "-" + 
+							("00" + (tgl.getMonth() + 1)).slice(-2) + "-" + 
+							("00" + tgl.getDate()).slice(-2);
+
 					res.json(kalori[0][0]);
 				}
 			})
@@ -88,6 +98,14 @@ router.get('/all',
 				if (kalori[0].length < 1) {
 					errors.noKalori = 'Tidak ada data kalori untuk pengguna ini';
 					return res.status(404).json(errors);
+				}
+
+				for (let i = 0; i < kalori[0].length; i++) {
+					let tgl = new Date(kalori[0][i].tanggal);
+					kalori[0][i].tanggal = 
+							tgl.getFullYear() + "-" + 
+							("00" + (tgl.getMonth() + 1)).slice(-2) + "-" + 
+							("00" + tgl.getDate()).slice(-2);
 				}
 
 				res.json(kalori[0]);

@@ -97,8 +97,7 @@ router.post('/login', (req, res) => {
           }
 
           const payload = {
-            id: user[0][0].pengguna_id,
-            nama: user[0][0].nama
+            id: user[0][0].pengguna_id
           };
 
           jwt.sign(payload, secretOrKey, {}, (err, token) => {

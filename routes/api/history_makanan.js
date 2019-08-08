@@ -50,8 +50,8 @@ router.get('/',
 router.post('/', 
   passport.authenticate('jwt', { session: false }), 
   (req, res) => {
-		const { errors, isValid } = validateMakananInput(req.body);
-
+    const { errors, isValid } = validateMakananInput(req.body);
+    
 		// Check validation
     if (!isValid) {
       return res.status(400).json(errors);
@@ -66,20 +66,30 @@ router.post('/',
         ("00" + d.getMinutes()).slice(-2) + ":" + 
         ("00" + d.getSeconds()).slice(-2);
 
-    // Save makanan to database
-    db.execute('INSERT INTO history_makanan (pengguna_id, makanan_id, tanggal) VALUES (?, ?, ?)',
-      [req.user.pengguna_id, req.body.makanan_id, now])
-      .then(result => {
-        // Update data kalori dikonsumsi
-        console.log(result);
-        db.execute(
-          'UPDATE history_kalori SET kalori_dikonsumsi = kalori_dikonsumsi + (SELECT kalori FROM makanan WHERE makanan_id = ?) WHERE pengguna_id = ? AND DATE_FORMAT(tanggal, "%d %m %Y") = DATE_FORMAT(NOW(), "%d %m %Y")',
-          [req.body.makanan_id, req.user.pengguna_id])
-          .then(() => {
-            res.json({
-              makanan: 'Success menyimpan makanan',
-              kalori: 'Success menambah kalori yang dikonsumsi'
-            });
+    db.execute('SELECT * FROM makanan WHERE makanan_id = ?', [req.body.makanan_id])
+      .then(makanan => {
+        if (makanan[0].length < 1) {
+          errors.makanan_id = 'Makanan tidak tersedia';
+          return res.status(400).json(errors);
+        }
+
+        const totalKalori = (req.body.jumlah / 100) * makanan[0][0].kalori;
+
+        // Save makanan to database
+        db.execute('INSERT INTO history_makanan (pengguna_id, makanan_id, tanggal, jumlah, total_kalori) VALUES (?, ?, ?, ?, ?)',
+          [req.user.pengguna_id, req.body.makanan_id, now, req.body.jumlah, totalKalori])
+          .then(result => {
+            // Update data kalori dikonsumsi
+            db.execute(
+              'UPDATE history_kalori SET kalori_dikonsumsi = kalori_dikonsumsi + ? WHERE pengguna_id = ? AND DATE_FORMAT(tanggal, "%d %m %Y") = DATE_FORMAT(NOW(), "%d %m %Y")',
+              [totalKalori, req.user.pengguna_id])
+              .then(() => {
+                res.json({
+                  makanan: 'Success menyimpan makanan',
+                  kalori: 'Success menambah kalori yang dikonsumsi'
+                });
+              })
+              .catch(err => res.status(404).json(err));
           })
           .catch(err => res.status(404).json(err));
       })

@@ -1,0 +1,36 @@
+.home {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.box {
+    flex-basis: 20%;
+    width: 100%;
+    padding: .5rem;
+}
+
+.data {
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgb(190, 185, 185);
+    border-radius: 3px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.data:hover {
+    transform: scale(1.02);
+}
+
+.data:hover>.icon {
+    color: rgb(76, 116, 161);
+}
+
+.icon {
+    color: rgb(109, 164, 228);
+}
+
+.text {
+    text-transform: capitalize;
+}

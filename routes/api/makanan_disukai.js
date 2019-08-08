@@ -57,7 +57,7 @@ router.post('/',
       [req.user.pengguna_id, req.body.makanan_id])
       .then(() => {
         res.json({
-          Success: "Success menyimpan makanan disukai"
+          success: "Success menyimpan makanan disukai"
         })
       })
       .catch(err => res.status(404).json(err));

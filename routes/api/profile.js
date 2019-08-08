@@ -47,7 +47,7 @@ const hitungKaloriPria = (beratBadan, tinggiBadan, usia, tingkatAktivitas) => {
 	// Hitung kebutuhan energi
 	let nilai_aktivitas = 0;
 	switch (tingkatAktivitas) {
-		case 'Sangat ringan':
+		case 'Sangat Ringan':
 			nilai_aktivitas = 1.30;
 			break;
 		case 'Ringan':
@@ -60,6 +60,7 @@ const hitungKaloriPria = (beratBadan, tinggiBadan, usia, tingkatAktivitas) => {
 			nilai_aktivitas = 2.10;
 			break;
 	}
+	
 	let kebutuhan_energi = nilai_aktivitas * AMB;
 
 	// Hitung IMT
@@ -70,8 +71,6 @@ const hitungKaloriPria = (beratBadan, tinggiBadan, usia, tingkatAktivitas) => {
 			break;
 		case (IMT >= 25):
 			kebutuhan_energi -= 500;
-			break;
-		case (IMT >= 27):
 			break;
 	}
 
@@ -177,22 +176,40 @@ router.post('/',
 						[req.body.jenis_kelamin, req.body.usia, req.body.berat_badan, 
 							req.body.tinggi_badan, req.body.tingkat_aktivitas, req.user.pengguna_id])
 						.then(() => {
-							const d = new Date();
-							const now =
-									d.getFullYear() + "/" + 
-									("00" + (d.getMonth() + 1)).slice(-2) + "/" + 
-									("00" + d.getDate()).slice(-2) + " " + 
-									("00" + d.getHours()).slice(-2) + ":" + 
-									("00" + d.getMinutes()).slice(-2) + ":" + 
-									("00" + d.getSeconds()).slice(-2);
-							// Update kalori
-							db.execute('UPDATE history_kalori SET kalori_dibutuhkan = ?, kondisi_tubuh = ?, tanggal = ? WHERE pengguna_id = ? && DATE(tanggal) = CURDATE()',
-								[kebutuhan_kalori, kondisi_tubuh, now, req.user.pengguna_id])
-								.then(() => {
-									res.json({
-										profile: 'Success mengubah profile',
-										kalori: 'Success mengubah kalori'
-									})
+
+							db.execute('SELECT * FROM history_kalori WHERE DATE(tanggal) = CURDATE()')
+								.then(history => {
+									const d = new Date();
+									const now =
+											d.getFullYear() + "/" + 
+											("00" + (d.getMonth() + 1)).slice(-2) + "/" + 
+											("00" + d.getDate()).slice(-2) + " " + 
+											("00" + d.getHours()).slice(-2) + ":" + 
+											("00" + d.getMinutes()).slice(-2) + ":" + 
+											("00" + d.getSeconds()).slice(-2);
+
+									if (history[0].length > 0) {
+										// Update kalori
+										db.execute('UPDATE history_kalori SET kalori_dibutuhkan = ?, kondisi_tubuh = ?, tanggal = ? WHERE pengguna_id = ? && DATE(tanggal) = CURDATE()',
+											[kebutuhan_kalori, kondisi_tubuh, now, req.user.pengguna_id])
+											.then(() => {
+												res.json({
+													profile: 'Success mengubah profile',
+													kalori: 'Success mengubah kalori'
+												})
+											})
+											.catch(err => res.status(404).json(err));
+									} else {
+										db.execute('INSERT INTO history_kalori (kalori_dibutuhkan, kondisi_tubuh, tanggal, pengguna_id) VALUES (?, ?, ?, ?)',
+											[kebutuhan_kalori, kondisi_tubuh, now, req.user.pengguna_id])
+											.then(() => {
+												res.json({
+													profile: 'Success mengubah profile',
+													kalori: 'Success menyimpan kalori'
+												})
+											})
+											.catch(err => res.status(404).json(err));
+									}
 								})
 								.catch(err => res.status(404).json(err));
 						})
